@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from django_cas import CAS
 
 class Tgt(models.Model):
-    username = models.CharField(max_length = 255, unique = True)
+    username = models.CharField(max_length = 30, unique = True)
     tgt = models.CharField(max_length = 255)
     created = models.DateTimeField(auto_now = True)
 
@@ -61,7 +61,7 @@ def get_tgt_for(user):
         raise CasTicketException("no ticket found for user " + user.username)
 
 def delete_old_tickets(**kwargs):
-    """ Delete tickets if they are over 2 days old 
+    """ Delete tickets if they are over 2 days old
         kwargs = ['raw', 'signal', 'instance', 'sender', 'created']
     """
     sender = kwargs.get('sender', None)
