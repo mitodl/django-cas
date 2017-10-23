@@ -7,27 +7,32 @@ from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.views import login, logout
 from django.core.urlresolvers import reverse
+try:
+    from django.utils.deprecation import MiddlewareMixin as base_class
+except ImportError:
+    base_class = object
 
 from django_cas.views import login as cas_login, logout as cas_logout, _service_url
 
 __all__ = ['CASMiddleware']
 
-class CASMiddleware(object):
+
+class CASMiddleware(base_class):
     """Middleware that allows CAS authentication on admin pages"""
 
     def process_request(self, request):
         """Logs in the user if a ticket is append as parameter"""
 
-        ticket = request.REQUEST.get('ticket')
+        if request.method == 'POST':
+            ticket = request.POST.get('ticket')
+        else:
+            ticket = request.GET.get('ticket')
 
         if ticket:
             from django.contrib import auth
             user = auth.authenticate(ticket=ticket, service=_service_url(request))
             if user is not None:
                 auth.login(request, user)
-
-
-
 
     def process_view(self, request, view_func, view_args, view_kwargs):
         """Forwards unauthenticated requests to the admin page to the CAS

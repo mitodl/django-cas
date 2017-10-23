@@ -7,3 +7,8 @@
 
 # PyDev garbage
 .tmp*
+
+# Testing garbage
+.cache
+.coverage*
+.tox
