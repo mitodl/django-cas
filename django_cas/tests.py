@@ -1,7 +1,11 @@
 from StringIO import StringIO
 import urllib
 from django.conf import settings
-from django.utils.unittest.case import TestCase
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.test import TestCase
+
+import mock
 
 from django_cas.backends import _verify_cas2
 from django_cas.models import PgtIOU, Tgt
@@ -19,6 +23,24 @@ def dummyUrlOpenWithProxyGrantingTikcet(url):
 
 
 class backendTest(TestCase):
+    def test_login_via_middleware(self):
+        user = User.objects.create_user('test_user')
+        ticket = 'thats_the_ticket'
+        url = '{}?ticket={}'.format(reverse('cas_proxy_callback'), ticket)
+        with mock.patch('django_cas.backends._verify', return_value=(user.username, None)) as mock_verify:
+            response = self.client.get(url)
+            self.assertEqual(200, response.status_code)
+            mock_verify.assert_called_once()
+
+    def test_login_view(self):
+        user = User.objects.create_user('test_user')
+        ticket = 'thats_the_ticket'
+        url = '{}?ticket={}'.format(reverse('cas_login'), ticket)
+        with mock.patch('django_cas.backends._verify', return_value=(user.username, None)) as mock_verify:
+            response = self.client.get(url)
+            self.assertRedirects(response, '/', target_status_code=404)
+            mock_verify.assert_called_once()
+
     def test_verify_cas2_no_pgt(self):
         urllib.urlopen = dummyUrlOpenNoProxyGrantingTicket
         settings.CAS_PROXY_CALLBACK = None
@@ -27,8 +49,8 @@ class backendTest(TestCase):
 
     def test_verify_cas2_with_pgt(self):
         urllib.urlopen = dummyUrlOpenWithProxyGrantingTikcet
-        #st = ServiceTicket.objects.create();
-        tgt = Tgt.objects.create(username='sannies');
+        #st = ServiceTicket.objects.create()
+        tgt = Tgt.objects.create(username='sannies')
         PgtIOU.objects.create(tgt=tgt, pgtIou='PGTIOU-NUYny6RiAfHBsuWq270m3l1kgPTjEOCexpowQV9ZJDrh8cGKzb')
 
         settings.CAS_PROXY_CALLBACK = "http://dummy2"
