@@ -19,7 +19,7 @@ _DEFAULTS = {
 CAS_URI = 'http://www.yale.edu/tp/cas'
 CAS = '{%s}' % CAS_URI
 
-for key, value in _DEFAULTS.iteritems():
+for key, value in _DEFAULTS.items():
     try:
         getattr(settings, key)
     except AttributeError:

@@ -1,7 +1,7 @@
 """CAS authentication backend"""
 
-import urllib
-from urlparse import urljoin
+from six.moves.urllib.parse import urlencode, urljoin
+from six.moves.urllib.request import urlopen
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -49,9 +49,9 @@ def _verify_cas2(ticket, service):
         params = {'ticket': ticket, 'service': service}
 
     url = (urljoin(settings.CAS_SERVER_URL, 'proxyValidate') + '?' +
-           urllib.urlencode(params))
+           urlencode(params))
 
-    page = urllib.urlopen(url)
+    page = urlopen(url)
     response = page.read()
     tree = ElementTree.fromstring(response)
     page.close()
@@ -108,7 +108,7 @@ def verify_proxy_ticket(ticket, service):
             return None
     finally:
         page.close()
-    
+
 
 _PROTOCOLS = {'1': _verify_cas1, '2': _verify_cas2}
 

@@ -1,5 +1,5 @@
-from StringIO import StringIO
-import urllib
+from six import StringIO
+from six.moves.urllib.request import urlopen
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -42,13 +42,13 @@ class backendTest(TestCase):
             mock_verify.assert_called_once()
 
     def test_verify_cas2_no_pgt(self):
-        urllib.urlopen = dummyUrlOpenNoProxyGrantingTicket
+        urlopen = dummyUrlOpenNoProxyGrantingTicket
         settings.CAS_PROXY_CALLBACK = None
         user, authentication_response = _verify_cas2('ST-jkadfhjksdhjkfh', 'http://dummy')
         self.assertEqual('sannies', user)
 
     def test_verify_cas2_with_pgt(self):
-        urllib.urlopen = dummyUrlOpenWithProxyGrantingTikcet
+        urlopen = dummyUrlOpenWithProxyGrantingTikcet
         #st = ServiceTicket.objects.create()
         tgt = Tgt.objects.create(username='sannies')
         PgtIOU.objects.create(tgt=tgt, pgtIou='PGTIOU-NUYny6RiAfHBsuWq270m3l1kgPTjEOCexpowQV9ZJDrh8cGKzb')
