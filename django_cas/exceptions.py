@@ -7,4 +7,3 @@ class CasTicketException(ValidationError):
 
 class CasConfigException(ValidationError):
     """The config is wrong"""
-

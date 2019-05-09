@@ -113,9 +113,9 @@ def logout(request, next_page=None):
 
 def proxy_callback(request):
     """Handles CAS 2.0+ XML-based proxy callback call.
-    Stores the proxy granting ticket in the database for 
+    Stores the proxy granting ticket in the database for
     future use.
-    
+
     NB: Use created and set it in python in case database
     has issues with setting up the default timestamp value
     """
