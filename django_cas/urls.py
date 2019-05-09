@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 __author__ = 'sannies'
 
 from django.conf.urls import url

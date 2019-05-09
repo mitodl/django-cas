@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from datetime import datetime, timedelta
 
 from six.moves.urllib.parse import urlencode, urljoin

@@ -1,5 +1,6 @@
 """Django CAS 1.0/2.0 authentication backend"""
 
+from __future__ import absolute_import
 from django.conf import settings
 
 __all__ = []

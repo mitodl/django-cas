@@ -8,14 +8,15 @@ from __future__ import print_function
 # python cas_tests.py [username]  
 # You will need to edit the constants below to match your setup ...
 
+from __future__ import absolute_import
 import unittest
 import sys
 import commands
 import getpass
-import urllib2
-import urllib
-from urlparse import urljoin
-import cookielib
+import six.moves.urllib.request, six.moves.urllib.error, six.moves.urllib.parse
+import six.moves.urllib.request, six.moves.urllib.parse, six.moves.urllib.error
+from six.moves.urllib.parse import urljoin
+import six.moves.http_cookiejar
 from xml.dom import minidom
 
 # Add in a separate test_config file if you wish of the following format
@@ -44,9 +45,9 @@ class TestCAS(unittest.TestCase):
     urls = {}
 
     def setUp(self):
-        self.cj = cookielib.CookieJar()
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(self.cj))
-        urllib2.install_opener(opener)
+        self.cj = six.moves.http_cookiejar.CookieJar()
+        opener = six.moves.urllib.request.build_opener(six.moves.urllib.request.HTTPCookieProcessor(self.cj))
+        six.moves.urllib.request.install_opener(opener)
         self.opener = opener
         self.get_auth()
         self.set_url('cas', CAS_SERVER_URL)
@@ -198,7 +199,7 @@ class TestCAS(unittest.TestCase):
             print('FAIL: CSRF Token could not be found on page')
             return ticket
         self.auth['service'] = self.urls['app']
-        data = urllib.urlencode(self.auth)
+        data = six.moves.urllib.parse.urlencode(self.auth)
         sso_resp = self.opener.open(url, data)
         sso_page = sso_resp.read()
         found = sso_page.find(CAS_SUCCESS) > -1
@@ -309,7 +310,7 @@ class TestCAS(unittest.TestCase):
         """ Check proxy ticket for service
             Use a new opener so its not got any cookies / auth already
         """
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
+        opener = six.moves.urllib.request.build_opener(six.moves.urllib.request.HTTPCookieProcessor(six.moves.http_cookiejar.CookieJar()))
         url_args = (self.urls['cas'], self.urls['app'], pt)
         url = '%sproxyValidate?service=%s&ticket=%s' % url_args
         try:
@@ -328,7 +329,7 @@ class TestCAS(unittest.TestCase):
         """ Use proxy ticket to login directly to app
             Use a new opener so its not got any cookies / auth already
         """
-        opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cookielib.CookieJar()))
+        opener = six.moves.urllib.request.build_opener(six.moves.urllib.request.HTTPCookieProcessor(six.moves.http_cookiejar.CookieJar()))
         return self.get_restricted(ticket=pt, opener=opener)
 
 if __name__ == '__main__':

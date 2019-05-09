@@ -1,7 +1,8 @@
 """CAS login/logout replacement views"""
+from __future__ import absolute_import
 from datetime import datetime
-from urllib import urlencode
-from urlparse import urljoin
+from six.moves.urllib.parse import urlencode
+from six.moves.urllib.parse import urljoin
 
 from django.http import HttpResponseRedirect, HttpResponseForbidden, HttpResponse
 from django.conf import settings

@@ -1,5 +1,6 @@
 """CAS authentication backend"""
 
+from __future__ import absolute_import
 from six.moves.urllib.parse import urlencode, urljoin
 from six.moves.urllib.request import urlopen
 
